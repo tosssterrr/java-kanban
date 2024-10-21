@@ -43,6 +43,10 @@ public class TaskManager {
         subTaskHashMap.put(subTask.getId(), subTask);
     }
 
+    public void updateTask(Task task) {
+        taskHashMap.put(task.getId(), task);
+    }
+
     public void updateEpic(Epic epic) {
         epicHashMap.put(epic.getId(), epic);
     }

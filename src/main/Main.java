@@ -34,7 +34,12 @@ public class Main {
         task1.setStatus(TaskStatus.DONE);
         movingSubTask1.setStatus(TaskStatus.DONE);
         movingSubTask2.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.updateTask(task1);
+        taskManager.updateSubTask(movingSubTask1);
+        taskManager.updateSubTask(movingSubTask2);
 
+        movingEpic.setDescription("Задачи для переезда");
+        taskManager.updateEpic(movingEpic);
 
         System.out.println("Статус 1-ой задачи - " + task1.getStatus());
         System.out.println("Статус 1-ой подзадачи переезда - " + movingSubTask1.getStatus());
