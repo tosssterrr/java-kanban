@@ -1,4 +1,8 @@
-package task;
+package service;
+
+import task.Epic;
+import task.SubTask;
+import task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +43,8 @@ public class TaskManager {
     }
 
     public void updateSubTask(SubTask subTask) {
+        subTask.getEpic().deleteSubTask(subTask);
+        subTask.getEpic().addSubTask(subTask);
         subTask.getEpic().updateStatus();
         subTaskHashMap.put(subTask.getId(), subTask);
     }
@@ -58,7 +64,7 @@ public class TaskManager {
     public void deleteSubtask(int id) {
         SubTask subtask = subTaskHashMap.remove(id);
         if (subtask != null) {
-            Epic epic = epicHashMap.get(subtask.getId());
+            Epic epic = subtask.getEpic();
             if (epic != null) {
                 epic.deleteSubTask(subtask);
                 epic.updateStatus();
@@ -66,24 +72,15 @@ public class TaskManager {
         }
     }
 
-    public void deleteEpic(int id, boolean isSave) {
-        Epic epic = epicHashMap.get(id);
-        if (isSave) {
-            if (!epic.getSubTasksList().isEmpty()) {
-                System.out.println("Сначала удалите подзадачи этого эпика или воспользуйтесь не безопасным удалением.");
-                return;
+    public void deleteEpic(int id) {
+        Epic epic = epicHashMap.remove(id);
+        if (!epic.getSubTasksList().isEmpty()) {
+            for (SubTask subTask : epic.getSubTasksList()) {
+                subTaskHashMap.remove(subTask.getId());
             }
-        } else {
-            if (!epic.getSubTasksList().isEmpty()) {
-                for (SubTask subTask : epic.getSubTasksList()) {
-                    deleteSubtask(subTask.getId());
-                }
-            }
+            epic.getSubTasksList().clear();
         }
-        epicHashMap.remove(id);
-
     }
-
 
 
     public ArrayList<Task> getAllTasks() {
@@ -96,5 +93,21 @@ public class TaskManager {
 
     public ArrayList<Epic> getAllEpics() {
         return new ArrayList<>(epicHashMap.values());
+    }
+
+    public ArrayList<SubTask> getAllSubTasksByEpic(Epic epic) {
+        return epic.getSubTasksList();
+    }
+
+    public void deleteAllEpics() {
+        epicHashMap.clear();
+    }
+
+    public void deleteAllTasks() {
+        taskHashMap.clear();
+    }
+
+    public void deleteAllSubTasks() {
+        subTaskHashMap.clear();
     }
 }

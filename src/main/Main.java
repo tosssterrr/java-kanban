@@ -1,5 +1,6 @@
 package main;
 
+import service.TaskManager;
 import task.*;
 
 public class Main {
@@ -47,7 +48,7 @@ public class Main {
         System.out.println("Статус эпика переезда - " + movingEpic.getStatus());
 
         taskManager.deleteTask(task1.getId());
-        taskManager.deleteEpic(movingEpic.getId(), false);
+        taskManager.deleteEpic(movingEpic.getId());
 
         System.out.println("Задачи: " + taskManager.getAllTasks());
         System.out.println("Подзадачи: " + taskManager.getAllSubtasks());
