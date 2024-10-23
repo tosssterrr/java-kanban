@@ -101,6 +101,7 @@ public class TaskManager {
 
     public void deleteAllEpics() {
         epicHashMap.clear();
+        subTaskHashMap.clear();
     }
 
     public void deleteAllTasks() {
@@ -108,6 +109,12 @@ public class TaskManager {
     }
 
     public void deleteAllSubTasks() {
+        for (SubTask subTask : subTaskHashMap.values()) {
+            Epic epic = subTask.getEpic();
+            epic.deleteSubTask(subTask);
+        }
         subTaskHashMap.clear();
+
+
     }
 }
