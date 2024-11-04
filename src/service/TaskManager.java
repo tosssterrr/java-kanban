@@ -5,7 +5,7 @@ import task.SubTask;
 
 import java.util.ArrayList;
 
-public interface TaskManager extends HistoryManager {
+public interface TaskManager  {
     void createEpic(Epic epic);
 
     void createTask(task.Task task);

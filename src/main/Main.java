@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
-
+        HistoryManager historyManager = Managers.getDefaultHistory();
         Epic movingEpic = new Epic("Переезд", "Решение вопросов о переезде");
         Epic birthdayEpic = new Epic("День рождения", "Планируем день рождение");
 
@@ -29,10 +29,16 @@ public class Main {
         taskManager.createTask(task1);
         // получаем их для добавления в историю
         taskManager.getTask(task1.getId());
+        taskManager.getTask(task1.getId());
+        taskManager.getTask(task1.getId());
+        taskManager.getTask(task1.getId());
+        taskManager.getTask(task1.getId());
         taskManager.getSubtask(movingSubTask1.getId());
         taskManager.getSubtask(movingSubTask2.getId());
         taskManager.getEpic(birthdayEpic.getId());
         taskManager.getEpic(movingEpic.getId());
+
+
 
         System.out.println("Задачи: " + taskManager.getTasks());
         System.out.println("Подзадачи: " + taskManager.getSubtasks());
@@ -56,10 +62,13 @@ public class Main {
         // удаляем задачи
         taskManager.deleteTask(task1.getId());
         taskManager.deleteEpic(movingEpic.getId());
+
         // проверяем процесс удаления
         System.out.println("Задачи: " + taskManager.getTasks());
         System.out.println("Подзадачи: " + taskManager.getSubtasks());
         System.out.println("Эпики: " + taskManager.getEpics());
+
+        System.out.println(historyManager.getHistory());
 
 
 

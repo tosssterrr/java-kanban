@@ -13,7 +13,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (historyList.size() < 10) {
+        if (historyList.contains(task)) {
+            historyList.remove(task);
+            historyList.add(task);
+        } else if (historyList.size() < 10) {
             historyList.add(task);
         } else {
             historyList.removeFirst();
@@ -25,4 +28,5 @@ public class InMemoryHistoryManager implements HistoryManager {
     public ArrayList<Task> getHistory() {
         return historyList;
     }
+
 }
