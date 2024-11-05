@@ -22,6 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createEpic(Epic epic) {
+//        Epic newEpic = epic;
         epicHashMap.put(epic.getId(), epic);
     }
 

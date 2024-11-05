@@ -9,8 +9,6 @@ public class Task {
     protected TaskStatus status;
     protected static int objCounter = 0;
 
-
-
     public Task(String name, String description, TaskStatus status) {
         this.description = description;
         this.name = name;
@@ -30,6 +28,14 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public TaskStatus getStatus() {
