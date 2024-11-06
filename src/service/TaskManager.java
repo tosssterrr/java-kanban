@@ -2,8 +2,10 @@ package service;
 
 import task.Epic;
 import task.SubTask;
+import task.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager  {
     void createEpic(Epic epic);
@@ -43,4 +45,6 @@ public interface TaskManager  {
     void deleteAllTasks();
 
     void deleteAllSubTasks();
+
+    List<Task> getHistory();
 }

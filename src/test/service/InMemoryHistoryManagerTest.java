@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import service.HistoryManager;
 import service.InMemoryHistoryManager;
+import service.Managers;
+import service.TaskManager;
 import task.Epic;
 import task.Task;
 import task.TaskStatus;
@@ -30,6 +32,13 @@ public class InMemoryHistoryManagerTest {
 
         assertTrue(historyManager.getHistory().contains(task));
         assertTrue(historyManager.getHistory().contains(epic));
+    }
+    @Test
+    public void shouldNotAddToHistoryIfNull() {
+        TaskManager taskManager = Managers.getDefault();
+        taskManager.getTask(0);
+        historyManager.add(null);
+        assertEquals(0, taskManager.getHistory().size());
     }
     @Test
     public void shouldNotChangeFieldsWhenAddedToHistory() {

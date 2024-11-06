@@ -7,7 +7,6 @@ public class Main {
 
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
-        HistoryManager historyManager = Managers.getDefaultHistory();
         Epic movingEpic = new Epic("Переезд", "Решение вопросов о переезде");
         Epic birthdayEpic = new Epic("День рождения", "Планируем день рождение");
 
@@ -68,7 +67,7 @@ public class Main {
         System.out.println("Подзадачи: " + taskManager.getSubtasks());
         System.out.println("Эпики: " + taskManager.getEpics());
 
-        System.out.println(historyManager.getHistory());
+        System.out.println(taskManager.getHistory());
 
 
 

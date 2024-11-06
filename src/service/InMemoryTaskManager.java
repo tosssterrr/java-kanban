@@ -6,6 +6,7 @@ import task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epicHashMap;
@@ -22,7 +23,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createEpic(Epic epic) {
-//        Epic newEpic = epic;
         epicHashMap.put(epic.getId(), epic);
     }
 
@@ -143,5 +143,10 @@ public class InMemoryTaskManager implements TaskManager {
             epic.deleteSubTask(subTask);
         }
         subTaskHashMap.clear();
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 }
