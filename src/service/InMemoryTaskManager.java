@@ -79,16 +79,18 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         taskHashMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void deleteSubtask(int id) {
-        SubTask subtask = subTaskHashMap.remove(id);
-        if (subtask != null) {
-            Epic epic = subtask.getEpic();
+        SubTask subTask = subTaskHashMap.remove(id);
+        if (subTask != null) {
+            Epic epic = subTask.getEpic();
             if (epic != null) {
-                epic.deleteSubTask(subtask);
+                epic.deleteSubTask(subTask);
                 epic.updateStatus();
+                historyManager.remove(id);
             }
         }
     }
@@ -96,8 +98,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpic(int id) {
         Epic epic = epicHashMap.remove(id);
+        historyManager.remove(id);
         if (!epic.getSubTasksList().isEmpty()) {
             for (SubTask subTask : epic.getSubTasksList()) {
+                historyManager.remove(subTask.getId());
                 subTaskHashMap.remove(subTask.getId());
             }
             epic.getSubTasksList().clear();
@@ -127,12 +131,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllEpics() {
+        for (Epic epic : epicHashMap.values()) {
+            historyManager.remove(epic.getId());
+        }
+        for (SubTask subTask: subTaskHashMap.values()) {
+            historyManager.remove(subTask.getId());
+        }
         epicHashMap.clear();
         subTaskHashMap.clear();
     }
 
     @Override
     public void deleteAllTasks() {
+        for (Task task : taskHashMap.values()) {
+            historyManager.remove(task.getId());
+        }
         taskHashMap.clear();
     }
 
@@ -141,6 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (SubTask subTask : subTaskHashMap.values()) {
             Epic epic = subTask.getEpic();
             epic.deleteSubTask(subTask);
+            historyManager.remove(subTask.getId());
         }
         subTaskHashMap.clear();
     }
