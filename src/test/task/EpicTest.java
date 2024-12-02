@@ -12,10 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EpicTest {
     private static TaskManager taskManager;
+
     @BeforeEach
-    public void BeforeEach(){
+    public void beforeEach() {
         taskManager = Managers.getDefault();
     }
+
     @Test
     public void shouldBeEqualWhenIdIsEqual() {
         Epic epic = new Epic("Test Name", "Test Description");
