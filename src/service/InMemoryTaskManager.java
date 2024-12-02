@@ -134,7 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Epic epic : epicHashMap.values()) {
             historyManager.remove(epic.getId());
         }
-        for (SubTask subTask: subTaskHashMap.values()) {
+        for (SubTask subTask : subTaskHashMap.values()) {
             historyManager.remove(subTask.getId());
         }
         epicHashMap.clear();
