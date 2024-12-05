@@ -1,5 +1,3 @@
-package test.service;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +10,7 @@ import task.Task;
 import task.TaskStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,9 +18,10 @@ public class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
 
     @BeforeEach
-    public void BeforeEach() {
+    public void beforeEach() {
         historyManager = new InMemoryHistoryManager();
     }
+
     @Test
     public void shouldAddDifferentTypesOfTasks() {
         Task task = new Task("Test Name", "Test Description", TaskStatus.NEW);
@@ -33,6 +33,7 @@ public class InMemoryHistoryManagerTest {
         assertTrue(historyManager.getHistory().contains(task));
         assertTrue(historyManager.getHistory().contains(epic));
     }
+
     @Test
     public void shouldNotAddToHistoryIfNull() {
         TaskManager taskManager = Managers.getDefault();
@@ -40,12 +41,13 @@ public class InMemoryHistoryManagerTest {
         historyManager.add(null);
         assertEquals(0, taskManager.getHistory().size());
     }
+
     @Test
     public void shouldNotChangeFieldsWhenAddedToHistory() {
         Task task = new Task("Test Name", "Test Description", TaskStatus.NEW);
         historyManager.add(task);
 
-        ArrayList<Task> historyList = historyManager.getHistory();
+        List<Task> historyList = historyManager.getHistory();
         assertEquals(1, historyList.size());
 
         Task taskFromHistory = historyList.getFirst();
@@ -54,23 +56,17 @@ public class InMemoryHistoryManagerTest {
         assertEquals(task.getStatus(), taskFromHistory.getStatus());
         assertEquals(task.getId(), taskFromHistory.getId());
     }
+
     @Test
-    void testAddingMoreThanTenTasks() {
-        for (int i = 0; i < 12; i++) {
-            Task task = new Task("Задача " + i, "Описание задачи " + i, TaskStatus.NEW);
-            historyManager.add(task);
-        }
-
-        ArrayList<Task> tasksInHistory = historyManager.getHistory();
-
-        // Проверяем размер истории - должно быть только последние 10 задач.
-        assertEquals(10, tasksInHistory.size(), "История должна содержать только последние 10 задач.");
-
-        for (int i = 2; i < 12; i++) {
-            String expectedName = "Задача " + i;
-            String expectedDescription = "Описание задачи " + i;
-            assertEquals(expectedName, tasksInHistory.get(i - 2).getName(), "Имя задачи не совпадает.");
-            assertEquals(expectedDescription, tasksInHistory.get(i - 2).getDescription(), "Описание задачи не совпадает.");
-        }
+    public void shouldAddToEndOfListIfAlreadyExist() {
+        Task task = new Task("Task 1", "Test Description", TaskStatus.NEW);
+        Task task2 = new Task("Task 2", "Test Description", TaskStatus.NEW);
+        Task task3 = new Task("Task 3", "Test Description", TaskStatus.NEW);
+        historyManager.add(task);
+        historyManager.add(task2);
+        historyManager.add(task3);
+        historyManager.add(task2);
+        List<Task> checkTasks = new ArrayList<>(List.of(task, task3, task2));
+        assertEquals(checkTasks, historyManager.getHistory());
     }
 }

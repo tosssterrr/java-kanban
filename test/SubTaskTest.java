@@ -1,5 +1,3 @@
-package test.task;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.Managers;
@@ -15,10 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SubTaskTest {
     private static TaskManager taskManager;
+
     @BeforeEach
-    public void BeforeEach(){
+    public void beforeEach() {
         taskManager = Managers.getDefault();
     }
+
     @Test
     public void shouldBeEqualWhenIdIsEqual() {
         Epic epic = new Epic("Test Name", "Test Description");
@@ -37,6 +37,7 @@ public class SubTaskTest {
         assertEquals(1, subTasks.size(), "Неверное количество подзадач");
         assertEquals(subTask, subTasks.getFirst(), "Подзадачи не равны");
     }
+
     @Test
     public void shouldNotAddSubTaskToEpic() {
         Epic epic = new Epic("Test Name", "Test Description");
