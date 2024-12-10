@@ -17,6 +17,13 @@ public class Task {
         objCounter++;
     }
 
+    public Task(int id, String name, String description, TaskStatus status) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
+
     public void setDescription(String description) {
         this.description = description;
 
