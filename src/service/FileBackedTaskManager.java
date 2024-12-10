@@ -62,22 +62,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                 String[] parts = line.split(",");
 
-                int id = Integer.parseInt(parts[0]);
-                String type = parts[1];
-
+                final int id = Integer.parseInt(parts[0]);
+                final String type = parts[1];
+                final String name = parts[2];
+                final TaskStatus status = TaskStatus.valueOf(parts[3]);
+                final String description = parts[4];
                 switch (type) {
                     case "Epic":
-                        Epic epic = new Epic(id, parts[2], parts[4], TaskStatus.valueOf(parts[3]));
+                        Epic epic = new Epic(id, name, description, status);
                         fileManager.createEpic(epic);
                         break;
                     case "SubTask":
                         Epic epicForSubTask = fileManager.getEpic(Integer.parseInt(parts[5]));
-                        SubTask subTask = new SubTask(id, parts[2], parts[4], TaskStatus.valueOf(parts[3]),
+                        SubTask subTask = new SubTask(id, name, description, status,
                                 epicForSubTask);
                         fileManager.createSubTask(subTask);
                         break;
                     case "Task":
-                        Task task = new Task(id, parts[2], parts[4], TaskStatus.valueOf(parts[3]));
+                        Task task = new Task(id, name, description, status);
                         fileManager.createTask(task);
                         break;
                 }
