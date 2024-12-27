@@ -7,9 +7,14 @@ import task.Task;
 import task.TaskStatus;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private static String file_name = "tasks.csv";
+    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm");
 
     private void save() {
         File file = new File(file_name);
@@ -19,27 +24,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 file.createNewFile();
             }
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                writer.write("id,type,name,status,description,epic");
+                writer.write("id,type,name,status,description,startTime,duration,epic");
                 writer.newLine();
 
                 for (Task task : taskHashMap.values()) {
-                    writer.write(String.format("%d,%s,%s,%s,%s,",
-                            task.getId(), "Task", task.getName(), task.getStatus(), task.getDescription()));
+                    writer.write(toString(task));
                     writer.newLine();
                 }
 
                 for (Epic epic : epicHashMap.values()) {
-                    writer.write(String.format("%d,%s,%s,%s,%s,",
-                            epic.getId(), "Epic", epic.getName(), epic.getStatus(), epic.getDescription()));
+                    writer.write(toString(epic));
                     writer.newLine();
                 }
 
                 for (SubTask subTask : subTaskHashMap.values()) {
-                    writer.write(String.format("%d,%s,%s,%s,%s,%d",
-                            subTask.getId(), "SubTask", subTask.getName(), subTask.getStatus(), subTask.getDescription(),
-                            subTask.getEpic().getId()));
+                    writer.write(toString(subTask));
                     writer.newLine();
                 }
+
             } catch (IOException e) {
                 throw new ManagerSaveException("Ошибка при сохранении данных в файл.", e);
             }
@@ -67,19 +69,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 final String name = parts[2];
                 final TaskStatus status = TaskStatus.valueOf(parts[3]);
                 final String description = parts[4];
+                final LocalDateTime startTime = parts[5].equals(" ") ?
+                        null : LocalDateTime.parse(parts[5], DATE_TIME_FORMAT);
+                final Duration duration = parts[6].equals(" ") ?
+                        null : Duration.ofMinutes(Long.parseLong(parts[6]));
                 switch (type) {
                     case "Epic":
                         Epic epic = new Epic(id, name, description, status);
                         fileManager.createEpic(epic);
                         break;
                     case "SubTask":
-                        Epic epicForSubTask = fileManager.getEpic(Integer.parseInt(parts[5]));
+                        Epic epicForSubTask = fileManager.getEpic(Integer.parseInt(parts[7]));
                         SubTask subTask = new SubTask(id, name, description, status,
-                                epicForSubTask);
+                                startTime, duration, epicForSubTask);
                         fileManager.createSubTask(subTask);
                         break;
                     case "Task":
-                        Task task = new Task(id, name, description, status);
+                        Task task = new Task(id, name, description, status, startTime, duration);
                         fileManager.createTask(task);
                         break;
                 }
@@ -88,6 +94,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             return new FileBackedTaskManager();
         }
         return fileManager;
+    }
+
+    private static String toString(Task task) {
+        String type = task instanceof SubTask ? "SubTask" : (task instanceof Epic ? "Epic" : "Task");
+        String epicId = (task instanceof SubTask) ? String.valueOf(((SubTask) task).getEpic().getId()) : " ";
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s",
+                task.getId(), type, task.getName(), task.getStatus(), task.getDescription(),
+                task.getStartTime() != null ? task.getStartTime().format(DATE_TIME_FORMAT) : " ",
+                task.getDuration() != null ? task.getDuration().toMinutes() : " ", epicId);
     }
 
     @Override

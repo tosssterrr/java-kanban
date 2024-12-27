@@ -1,5 +1,7 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -8,20 +10,41 @@ public class Task {
     protected int id;
     protected TaskStatus status;
     protected static int objCounter = 0;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(int id, String name, String description, TaskStatus status) {
+        this.id = id;
         this.description = description;
         this.name = name;
+        this.status = status;
+    }
+
+    public Task(String name, String description, TaskStatus status) {
+        this.name = name;
+        this.description = description;
         this.status = status;
         this.id = objCounter;
         objCounter++;
     }
 
-    public Task(int id, String name, String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration) {
+        this.description = description;
+        this.name = name;
+        this.status = status;
+        this.id = objCounter;
+        objCounter++;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public Task(int id, String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public void setDescription(String description) {
@@ -35,6 +58,18 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
     }
 
     public String getName() {

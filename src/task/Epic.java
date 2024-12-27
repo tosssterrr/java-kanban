@@ -1,6 +1,10 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Optional;
 
 public class Epic extends Task {
     private final ArrayList<SubTask> subTasksList;
@@ -25,34 +29,56 @@ public class Epic extends Task {
             return;
         }
 
-        boolean allNew = true;
+        boolean allDone = true;
         boolean anyInProgressOrDone = false;
 
         for (SubTask subTask : subTasksList) {
-            if (subTask.getStatus() == TaskStatus.DONE) {
+            if (subTask.getStatus() == TaskStatus.IN_PROGRESS) {
                 anyInProgressOrDone = true;
-                allNew = false;
-            } else if (subTask.getStatus() == TaskStatus.IN_PROGRESS) {
-                anyInProgressOrDone = true;
-                allNew = false;
+                allDone = false;
+            } else if (subTask.getStatus() != TaskStatus.DONE) {
+                allDone = false;
             }
         }
 
-        if (allNew) {
-            setStatus(TaskStatus.NEW);
-        } else if (anyInProgressOrDone) {
+        if (anyInProgressOrDone) {
             setStatus(TaskStatus.IN_PROGRESS);
-        } else {
+        } else if (allDone) {
             setStatus(TaskStatus.DONE);
+        } else {
+            setStatus(TaskStatus.NEW);
         }
     }
 
     public void addSubTask(SubTask subTask) {
         subTasksList.add(subTask);
+        startTime = getSubTasksList().stream()
+                .map(SubTask::getStartTime)
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+        duration = Optional.ofNullable(duration)
+                .orElse(Duration.ZERO).plus(subTask.duration != null ? subTask.duration : Duration.ZERO);
     }
 
     public void deleteSubTask(SubTask subTask) {
         subTasksList.remove(subTask);
+        startTime = getSubTasksList().stream()
+                .map(SubTask::getStartTime)
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+        duration = Optional.ofNullable(duration)
+                .map(d -> d.minus(subTask.duration != null ? subTask.duration : Duration.ZERO))
+                .orElse(Duration.ZERO);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return getSubTasksList().stream()
+                .map(SubTask::getStartTime)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
     }
 
     @Override
