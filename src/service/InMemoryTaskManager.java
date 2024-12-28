@@ -51,8 +51,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean validateTime(Task newTask) {
-        for ( Task existing : prioritizedTasks ) {
-            if(isOverlapping(newTask, existing)) {
+        for (Task existing : prioritizedTasks) {
+            if (isOverlapping(newTask, existing)) {
                 return false;
             }
         }
