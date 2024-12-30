@@ -38,12 +38,4 @@ public class SubTaskTest {
         assertEquals(subTask, subTasks.getFirst(), "Подзадачи не равны");
     }
 
-    @Test
-    public void shouldNotAddSubTaskToEpic() {
-        Epic epic = new Epic("Test Name", "Test Description");
-        SubTask subTask = new SubTask("Test Name", "Test Description", TaskStatus.NEW, epic);
-        assertNotNull(subTask);
-//        SubTask subTask2 = new SubTask("Test Name", "Test Description", TaskStatus.NEW, subTask1);
-//        java: incompatible types: task.SubTask cannot be converted to task.Epic
-    }
 }

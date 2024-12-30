@@ -8,66 +8,66 @@ import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileBackedTaskManagerTest {
-    private static FileBackedTaskManager fileTaskManager;
-    private static File tempFile;
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
+    private static File tempFile = new File("temp_tasks.csv");
 
-    @BeforeAll
-    public static void beforeAll() {
+
+    @Override @BeforeEach
+    public void setUp() {
         tempFile = new File("temp_tasks.csv");
         tempFile.deleteOnExit();
-        fileTaskManager = FileBackedTaskManager.loadFromFile(tempFile);
+        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
     }
 
     @AfterEach
     public void afterEach() {
-        fileTaskManager.deleteAllTasks();
-        fileTaskManager.deleteAllSubTasks();
-        fileTaskManager.deleteAllEpics();
+        taskManager.deleteAllTasks();
+        taskManager.deleteAllSubTasks();
+        taskManager.deleteAllEpics();
     }
 
     @Test
     public void shouldLoadFromEmptyFile() {
-        fileTaskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        Assertions.assertEquals(0, fileTaskManager.getTasks().size());
-        Assertions.assertEquals(0, fileTaskManager.getEpics().size());
-        Assertions.assertEquals(0, fileTaskManager.getSubtasks().size());
+        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
+        Assertions.assertEquals(0, taskManager.getTasks().size());
+        Assertions.assertEquals(0, taskManager.getEpics().size());
+        Assertions.assertEquals(0, taskManager.getSubtasks().size());
     }
 
     @Test
     void shouldSaveFromEmptyData() {
-        fileTaskManager.createEpic(new Epic("Test name", "test description"));
-        Assertions.assertEquals(1, fileTaskManager.getEpics().size());
-        fileTaskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        Assertions.assertEquals(1, fileTaskManager.getEpics().size());
+        taskManager.createEpic(new Epic("Test name", "test description"));
+        Assertions.assertEquals(1, taskManager.getEpics().size());
+        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
+        Assertions.assertEquals(1, taskManager.getEpics().size());
 
-        fileTaskManager.deleteAllEpics();
-        Assertions.assertEquals(0, fileTaskManager.getEpics().size(), "Эпики должны быть удалены.");
-        fileTaskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        Assertions.assertEquals(0, fileTaskManager.getEpics().size());
+        taskManager.deleteAllEpics();
+        Assertions.assertEquals(0, taskManager.getEpics().size(), "Эпики должны быть удалены.");
+        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
+        Assertions.assertEquals(0, taskManager.getEpics().size());
     }
 
     @Test
     void shouldSaveAndLoadFromBigData() {
         for (int i = 0; i < 50; i++) {
-            fileTaskManager.createEpic(new Epic("Test name " + i, "test description"));
-            fileTaskManager.createTask(new Task("Test name " + i, "test description", TaskStatus.NEW));
+            taskManager.createEpic(new Epic("Test name " + i, "test description"));
+            taskManager.createTask(new Task("Test name " + i, "test description", TaskStatus.NEW));
         }
-        Assertions.assertEquals(50, fileTaskManager.getEpics().size());
-        Assertions.assertEquals(50, fileTaskManager.getTasks().size());
+        Assertions.assertEquals(50, taskManager.getEpics().size());
+        Assertions.assertEquals(50, taskManager.getTasks().size());
 
-        fileTaskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        Assertions.assertEquals(50, fileTaskManager.getEpics().size());
-        Assertions.assertEquals(50, fileTaskManager.getTasks().size());
+        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
+        Assertions.assertEquals(50, taskManager.getEpics().size());
+        Assertions.assertEquals(50, taskManager.getTasks().size());
     }
 
     @Test
     public void shouldGetById() {
         Epic epic = new Epic("Test Name", "Test Description");
-        fileTaskManager.createEpic(epic);
+        taskManager.createEpic(epic);
         final int epicId = epic.getId();
 
-        final Epic savedEpic = fileTaskManager.getEpic(epicId);
+        final Epic savedEpic = taskManager.getEpic(epicId);
         assertNotNull(savedEpic, "Задача не найдена");
         assertEquals(epic, savedEpic, "Задачи не совпадают");
     }

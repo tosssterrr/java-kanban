@@ -1,19 +1,17 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.Managers;
-import service.TaskManager;
+import service.InMemoryTaskManager;
 import task.Epic;
 import task.Task;
 import task.TaskStatus;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryTaskManagerTest {
-    private static TaskManager taskManager;
+public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
-    @BeforeEach
-    public void beforeEach() {
-        taskManager = Managers.getDefault();
+    @Override @BeforeEach
+    public void setUp() {
+        this.taskManager = new InMemoryTaskManager();
     }
 
     @Test
