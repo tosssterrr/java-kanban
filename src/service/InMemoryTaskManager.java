@@ -8,11 +8,11 @@ import task.Task;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    protected final HashMap<Integer, Epic> epicHashMap;
-    protected final HashMap<Integer, SubTask> subTaskHashMap;
-    protected final HashMap<Integer, Task> taskHashMap;
+    protected final Map<Integer, Epic> epicHashMap;
+    protected final Map<Integer, SubTask> subTaskHashMap;
+    protected final Map<Integer, Task> taskHashMap;
     protected final HistoryManager historyManager;
-    protected final TreeSet<Task> prioritizedTasks;
+    protected final Set<Task> prioritizedTasks;
 
     public InMemoryTaskManager() {
         this.historyManager = Managers.getDefaultHistory();
@@ -23,7 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public TreeSet<Task> getPrioritizedTasks() {
+    public Set<Task> getPrioritizedTasks() {
         return prioritizedTasks;
     }
 
@@ -38,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
         }
         taskHashMap.put(task.getId(), task);
-        Optional.ofNullable(task.getStartTime()).ifPresent(startTime -> prioritizedTasks.add(task));
+        addPrioritizedTask(task);
     }
 
     @Override
@@ -47,16 +47,15 @@ public class InMemoryTaskManager implements TaskManager {
             throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
         }
         subTaskHashMap.put(subTask.getId(), subTask);
-        Optional.ofNullable(subTask.getStartTime()).ifPresent(startTime -> prioritizedTasks.add(subTask));
+        addPrioritizedTask(subTask);
+    }
+
+    private void addPrioritizedTask(Task task) {
+        Optional.ofNullable(task.getStartTime()).ifPresent(startTime -> prioritizedTasks.add(task));
     }
 
     private boolean validateTime(Task newTask) {
-        for (Task existing : prioritizedTasks) {
-            if (isOverlapping(newTask, existing)) {
-                return false;
-            }
-        }
-        return true;
+        return prioritizedTasks.stream().noneMatch(existing -> isOverlapping(newTask, existing));
     }
 
     public boolean isOverlapping(Task newTask, Task exictingTask) {
@@ -96,7 +95,7 @@ public class InMemoryTaskManager implements TaskManager {
         subTask.getEpic().updateStatus();
         subTaskHashMap.put(subTask.getId(), subTask);
         prioritizedTasks.remove(subTask);
-        Optional.ofNullable(subTask.getStartTime()).ifPresent(startTime -> prioritizedTasks.add(subTask));
+        addPrioritizedTask(subTask);
     }
 
     @Override
@@ -106,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         taskHashMap.put(task.getId(), task);
         prioritizedTasks.remove(task);
-        Optional.ofNullable(task.getStartTime()).ifPresent(startTime -> prioritizedTasks.add(task));
+        addPrioritizedTask(task);
     }
 
     @Override
