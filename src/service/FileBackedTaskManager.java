@@ -78,9 +78,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         fileManager.createEpic(epic);
                         break;
                     case "SubTask":
-                        Epic epicForSubTask = fileManager.getEpic(Integer.parseInt(parts[7]));
+
+                        int epicId = Integer.parseInt(parts[7]);
                         SubTask subTask = new SubTask(id, name, description, status,
-                                startTime, duration, epicForSubTask);
+                                startTime, duration, epicId);
+
                         fileManager.createSubTask(subTask);
                         break;
                     case "Task":
@@ -92,12 +94,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             return new FileBackedTaskManager();
         }
+
         return fileManager;
     }
 
     private static String toString(Task task) {
         String type = task instanceof SubTask ? "SubTask" : (task instanceof Epic ? "Epic" : "Task");
-        String epicId = (task instanceof SubTask) ? String.valueOf(((SubTask) task).getEpic().getId()) : " ";
+        String epicId = (task instanceof SubTask) ? String.valueOf(((SubTask) task).getEpicId()) : " ";
         return String.format("%d,%s,%s,%s,%s,%s,%s,%s",
                 task.getId(), type, task.getName(), task.getStatus(), task.getDescription(),
                 task.getStartTime() != null ? task.getStartTime().format(DATE_TIME_FORMAT) : " ",
@@ -159,20 +162,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        super.updateEpic(epic);
+    public void updateEpic(int id, Epic epic) {
+        super.updateEpic(id, epic);
         save();
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
-        super.updateSubTask(subTask);
+    public void updateSubTask(int id, SubTask subTask) {
+        super.updateSubTask(id, subTask);
         save();
     }
 
     @Override
-    public void updateTask(Task task) {
-        super.updateTask(task);
+    public void updateTask(int id, Task task) {
+        super.updateTask(id, task);
         save();
     }
 }

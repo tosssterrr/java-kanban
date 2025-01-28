@@ -8,7 +8,8 @@ import task.TaskStatus;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EpicTest {
     private static TaskManager taskManager;
@@ -41,27 +42,27 @@ public class EpicTest {
         taskManager.createEpic(epic);
         assertEquals(TaskStatus.NEW, epic.getStatus()); // при пустом эпике должен быть статус new
 
-        SubTask subTask = new SubTask("test New", " ", TaskStatus.NEW, epic);
+        SubTask subTask = new SubTask("test New", " ", TaskStatus.NEW, epic.getId());
         taskManager.createSubTask(subTask);
         assertEquals(TaskStatus.NEW, epic.getStatus()); // при новом сабтаске должен быть также new
 
-        SubTask subTask2 = new SubTask("test inProgress", "", TaskStatus.IN_PROGRESS, epic);
+        SubTask subTask2 = new SubTask("test inProgress", "", TaskStatus.IN_PROGRESS, epic.getId());
         taskManager.createSubTask(subTask2);
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus()); // при хотя бы одном in progress должен быть IN_PROGRESS
 
         subTask.setStatus(TaskStatus.DONE);
-        taskManager.updateSubTask(subTask);
+        taskManager.updateSubTask(subTask.getId(), subTask);
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus()); // если не все эпики Done должен быть in progress
 
         subTask2.setStatus(TaskStatus.DONE);
-        taskManager.updateSubTask(subTask2);
+        taskManager.updateSubTask(subTask2.getId(), subTask2);
         assertEquals(TaskStatus.DONE, epic.getStatus()); // при всех выполненных сабтсаках должен быть done
     }
 
     @Test
     public void shouldNotAddEpicToEpicSubTasks() {
         Epic epic = new Epic("Test Name", "Test Description");
-       //  assertThrows(Exception.class, () -> epic.addSubTask(epic));
+        //  assertThrows(Exception.class, () -> epic.addSubTask(epic));
         // java: incompatible types: task.Epic cannot be converted to task.SubTask
         assertNotNull(epic);
     }

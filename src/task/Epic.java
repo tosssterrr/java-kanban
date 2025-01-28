@@ -58,7 +58,8 @@ public class Epic extends Task {
                 .min(LocalDateTime::compareTo)
                 .orElse(null);
         duration = Optional.ofNullable(duration)
-                .orElse(Duration.ZERO).plus(subTask.duration != null ? subTask.duration : Duration.ZERO);
+                .orElse(Duration.ZERO)
+                .plus(subTask.duration != null ? subTask.duration : Duration.ZERO);
     }
 
     public void deleteSubTask(SubTask subTask) {

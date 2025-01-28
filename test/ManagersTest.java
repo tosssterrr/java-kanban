@@ -3,7 +3,7 @@ import service.HistoryManager;
 import service.Managers;
 import service.TaskManager;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagersTest {
     @Test
