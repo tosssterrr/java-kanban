@@ -10,23 +10,29 @@ import java.net.InetSocketAddress;
 
 public class HttpTaskServer {
 
-    private final int PORT;
+    private final int port;
     private HttpServer server;
+    private final TaskManager manager;
 
     public HttpTaskServer(int port) {
-        PORT = port;
+        this.port = port;
+        this.manager = Managers.getFileBacked();
+    }
+
+    public HttpTaskServer(int port, TaskManager manager) {
+        this.port = port;
+        this.manager = manager;
     }
 
     public void start() throws IOException {
-        TaskManager manager = Managers.getFileBacked();
-        server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/tasks", new RestTaskHandler(manager));
         server.createContext("/subtasks", new RestSubTaskHandler(manager));
         server.createContext("/epics", new RestEpicHandler(manager));
         server.createContext("/history", new RestHistoryHandler(manager));
         server.createContext("/prioritized", new RestPrioritizedHandler(manager));
         server.start();
-        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+        System.out.println("HTTP-сервер запущен на " + port + " порту!");
     }
 
     public void stop() {
