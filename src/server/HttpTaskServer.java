@@ -12,13 +12,19 @@ public class HttpTaskServer {
 
     private final int PORT;
     private HttpServer server;
+    private final TaskManager manager;
 
     public HttpTaskServer(int port) {
         PORT = port;
+        this.manager = Managers.getFileBacked();
+    }
+
+    public HttpTaskServer(int port, TaskManager manager) {
+        PORT = port;
+        this.manager = manager;
     }
 
     public void start() throws IOException {
-        TaskManager manager = Managers.getFileBacked();
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/tasks", new RestTaskHandler(manager));
         server.createContext("/subtasks", new RestSubTaskHandler(manager));
