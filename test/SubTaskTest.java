@@ -22,7 +22,7 @@ public class SubTaskTest {
     @Test
     public void shouldBeEqualWhenIdIsEqual() {
         Epic epic = new Epic("Test Name", "Test Description");
-        SubTask subTask = new SubTask("Test Name", "Test Description", TaskStatus.NEW, epic);
+        SubTask subTask = new SubTask("Test Name", "Test Description", TaskStatus.NEW, epic.getId());
         taskManager.createEpic(epic);
         taskManager.createSubTask(subTask);
         final int subTaskId = subTask.getId();

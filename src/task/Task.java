@@ -18,6 +18,9 @@ public class Task {
         this.description = description;
         this.name = name;
         this.status = status;
+        if (objCounter < id) {
+            objCounter = id;
+        }
     }
 
     public Task(String name, String description, TaskStatus status) {
@@ -45,6 +48,9 @@ public class Task {
         this.status = status;
         this.startTime = startTime;
         this.duration = duration;
+        if (objCounter < id) {
+            objCounter = id;
+        }
     }
 
     public void setDescription(String description) {
@@ -109,5 +115,25 @@ public class Task {
                 ", id=" + id +
                 ", status=" + status +
                 '}';
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static int getObjCounter() {
+        return objCounter;
+    }
+
+    public static void setObjCounter(int objCounter) {
+        Task.objCounter = objCounter;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 }

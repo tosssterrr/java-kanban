@@ -7,7 +7,8 @@ import task.TaskStatus;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TaskTest {
     private static TaskManager taskManager;
@@ -33,8 +34,6 @@ class TaskTest {
         assertEquals(1, tasks.size(), "Неверное количество задач");
         assertEquals(task, tasks.getFirst(), "Задачи не равны");
     }
-
-
 
 
 }

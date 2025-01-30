@@ -46,6 +46,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (!validateTime(subTask)) {
             throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
         }
+        epicHashMap.get(subTask.getEpicId()).addSubTask(subTask);
+        epicHashMap.get(subTask.getEpicId()).updateStatus();
         subTaskHashMap.put(subTask.getId(), subTask);
         addPrioritizedTask(subTask);
     }
@@ -66,14 +68,19 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTask(int id) {
         Task task = taskHashMap.get(id);
+        if (task == null) {
+            throw new NoSuchElementException();
+        }
         historyManager.add(task);
         return task;
-
     }
 
     @Override
     public SubTask getSubtask(int id) {
         SubTask subTask = subTaskHashMap.get(id);
+        if (subTask == null) {
+            throw new NoSuchElementException();
+        }
         historyManager.add(subTask);
         return subTask;
     }
@@ -81,36 +88,40 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpic(int id) {
         Epic epic = epicHashMap.get(id);
+        if (epic == null) {
+            throw new NoSuchElementException();
+        }
         historyManager.add(epic);
         return epic;
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
+    public void updateSubTask(int id, SubTask subTask) {
         if (!validateTime(subTask)) {
             throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
         }
-        subTask.getEpic().deleteSubTask(subTask);
-        subTask.getEpic().addSubTask(subTask);
-        subTask.getEpic().updateStatus();
-        subTaskHashMap.put(subTask.getId(), subTask);
+        Epic epic = this.epicHashMap.get(subTask.getEpicId());
+        epic.deleteSubTask(subTask);
+        epic.addSubTask(subTask);
+        epic.updateStatus();
+        subTaskHashMap.put(id, subTask);
         prioritizedTasks.remove(subTask);
         addPrioritizedTask(subTask);
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(int id, Task task) {
         if (!validateTime(task)) {
             throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
         }
-        taskHashMap.put(task.getId(), task);
+        taskHashMap.put(id, task);
         prioritizedTasks.remove(task);
         addPrioritizedTask(task);
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        epicHashMap.put(epic.getId(), epic);
+    public void updateEpic(int id, Epic epic) {
+        epicHashMap.put(id, epic);
     }
 
     @Override
@@ -123,7 +134,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtask(int id) {
         SubTask subTask = subTaskHashMap.remove(id);
         if (subTask != null) {
-            Epic epic = subTask.getEpic();
+            Epic epic = this.getEpic(subTask.getEpicId());
             if (epic != null) {
                 epic.deleteSubTask(subTask);
                 epic.updateStatus();
@@ -163,8 +174,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SubTask> getEpicSubtasks(Epic epic) {
-        return epic.getSubTasksList();
+    public ArrayList<SubTask> getEpicSubtasks(int id) {
+        return epicHashMap.get(id).getSubTasksList();
     }
 
     @Override
@@ -191,7 +202,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllSubTasks() {
         for (SubTask subTask : subTaskHashMap.values()) {
-            Epic epic = subTask.getEpic();
+            Epic epic = this.getEpic(subTask.getEpicId());
             epic.deleteSubTask(subTask);
             historyManager.remove(subTask.getId());
             prioritizedTasks.remove(subTask);

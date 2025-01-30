@@ -1,10 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import service.HistoryManager;
 import service.InMemoryHistoryManager;
-import service.Managers;
-import service.TaskManager;
 import task.Epic;
 import task.Task;
 import task.TaskStatus;
@@ -12,7 +9,8 @@ import task.TaskStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
@@ -34,13 +32,6 @@ public class InMemoryHistoryManagerTest {
         assertTrue(historyManager.getHistory().contains(epic));
     }
 
-    @Test
-    public void shouldNotAddToHistoryIfNull() {
-        TaskManager taskManager = Managers.getDefault();
-        taskManager.getTask(0);
-        historyManager.add(null);
-        assertEquals(0, taskManager.getHistory().size());
-    }
 
     @Test
     public void shouldNotChangeFieldsWhenAddedToHistory() {

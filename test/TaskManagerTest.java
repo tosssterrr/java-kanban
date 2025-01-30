@@ -10,8 +10,10 @@ import task.TaskStatus;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
@@ -41,7 +43,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void testCreateSubTask() {
         Epic epic = new Epic("Test Epic", "Description");
         taskManager.createEpic(epic);
-        SubTask subTask = new SubTask("Test Subtask", "Description", TaskStatus.NEW, epic);
+        SubTask subTask = new SubTask("Test Subtask", "Description", TaskStatus.NEW, epic.getId());
         taskManager.createSubTask(subTask);
 
         assertEquals(1, taskManager.getSubtasks().size());
@@ -57,7 +59,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 taskTime.minusMinutes(10), Duration.ofMinutes(20));
         taskManager.createTask(task);
         assertThrows(TaskTimeOverlapException.class, () -> taskManager.createTask(task2));
-        assertNull(taskManager.getTask(task2.getId()));
+        assertThrows(NoSuchElementException.class, () -> taskManager.getTask(task2.getId()));
     }
 
     @Test
@@ -81,7 +83,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void testGetSubTaskById() {
         Epic epic = new Epic("Test Epic", "Description");
         taskManager.createEpic(epic);
-        SubTask subTask = new SubTask("Test Subtask", "Description", TaskStatus.NEW, epic);
+        SubTask subTask = new SubTask("Test Subtask", "Description", TaskStatus.NEW, epic.getId());
         final int subtaskId = subTask.getId();
         taskManager.createSubTask(subTask);
 
@@ -94,19 +96,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(original);
 
         original.setName("Updated");
-        taskManager.updateTask(original);
+        taskManager.updateTask(original.getId(), original);
 
         assertEquals("Updated", taskManager.getTask(original.getId()).getName());
     }
 
     @Test
     public void testUpdateSubTask() {
-        SubTask original = new SubTask("Original", "Description", TaskStatus.NEW,
-                new Epic("test", "test"));
+        Epic epic = new Epic("test", "test");
+        taskManager.createEpic(epic);
+        SubTask original = new SubTask("Original", "Description", TaskStatus.NEW, epic.getId());
         taskManager.createSubTask(original);
 
         original.setName("Updated");
-        taskManager.updateSubTask(original);
+        taskManager.updateSubTask(original.getId(), original);
 
         assertEquals("Updated", taskManager.getSubtask(original.getId()).getName());
     }
@@ -117,7 +120,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(original);
 
         original.setName("Updated");
-        taskManager.updateEpic(original);
+        taskManager.updateEpic(original.getId(), original);
 
         assertEquals("Updated", taskManager.getEpic(original.getId()).getName());
     }
@@ -129,7 +132,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.deleteTask(task.getId());
         assertEquals(0, taskManager.getTasks().size());
 
-        assertNull(taskManager.getTask(task.getId()));
+        assertThrows(NoSuchElementException.class, () -> taskManager.getTask(task.getId()));
     }
 
     @Test
@@ -139,26 +142,30 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.deleteEpic(epic.getId());
 
         assertEquals(0, taskManager.getEpics().size());
-        assertNull(taskManager.getTask(epic.getId()));
+        assertThrows(NoSuchElementException.class, () -> taskManager.getTask(epic.getId()));
     }
 
     @Test
     public void testDeleteSubTask() {
+        Epic epic = new Epic("test", "test");
+        taskManager.createEpic(epic);
         SubTask subTask = new SubTask("Original", "Description", TaskStatus.NEW,
-                new Epic("test", "test"));
+                epic.getId());
         taskManager.createSubTask(subTask);
         taskManager.deleteSubtask(subTask.getId());
 
         assertEquals(0, taskManager.getSubtasks().size());
-        assertNull(taskManager.getTask(subTask.getId()));
+        assertThrows(NoSuchElementException.class, () -> taskManager.getTask(subTask.getId()));
     }
 
     @Test
     public void testGetEpicSubtasks() {
         Epic epic = new Epic("test", "test");
+        taskManager.createEpic(epic);
         ArrayList<SubTask> subTasks = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            SubTask subTask = new SubTask("test " + i, "desc", TaskStatus.NEW, epic);
+            SubTask subTask = new SubTask("test " + i, "desc", TaskStatus.NEW, epic.getId());
+            taskManager.createSubTask(subTask);
             subTasks.add(subTask);
         }
         assertEquals(subTasks, epic.getSubTasksList());

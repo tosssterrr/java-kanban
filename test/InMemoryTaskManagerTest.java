@@ -5,11 +5,13 @@ import task.Epic;
 import task.Task;
 import task.TaskStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
-    @Override @BeforeEach
+    @Override
+    @BeforeEach
     public void setUp() {
         this.taskManager = new InMemoryTaskManager();
     }
