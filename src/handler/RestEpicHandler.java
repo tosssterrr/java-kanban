@@ -115,5 +115,5 @@ public class RestEpicHandler extends BaseHttpHandler implements HttpHandler {
         return Endpoint.NOT_FOUND;
     }
 
-    enum Endpoint {GET_EPICS, GET_EPIC_BY_ID, CREATE_EPIC, DELETE_EPIC, UPDATE_EPIC, NOT_FOUND, GET_EPICS_SUBTASKS}
+    enum Endpoint { GET_EPICS, GET_EPIC_BY_ID, CREATE_EPIC, DELETE_EPIC, UPDATE_EPIC, NOT_FOUND, GET_EPICS_SUBTASKS }
 }

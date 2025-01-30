@@ -103,5 +103,5 @@ public class RestTaskHandler extends BaseHttpHandler implements HttpHandler {
         return Endpoint.NOT_FOUND;
     }
 
-    enum Endpoint {GET_TASKS, GET_TASK_BY_ID, CREATE_TASK, UPDATE_TASK, DELETE_TASK, NOT_FOUND}
+    enum Endpoint { GET_TASKS, GET_TASK_BY_ID, CREATE_TASK, UPDATE_TASK, DELETE_TASK, NOT_FOUND }
 }

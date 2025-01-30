@@ -107,5 +107,5 @@ public class RestSubTaskHandler extends BaseHttpHandler implements HttpHandler {
         return Endpoint.NOT_FOUND;
     }
 
-    enum Endpoint {GET_SUBTASKS, GET_SUBTASK_BY_ID, CREATE_SUBTASK, DELETE_SUBTASK, UPDATE_SUBTASK, NOT_FOUND}
+    enum Endpoint { GET_SUBTASKS, GET_SUBTASK_BY_ID, CREATE_SUBTASK, DELETE_SUBTASK, UPDATE_SUBTASK, NOT_FOUND }
 }
